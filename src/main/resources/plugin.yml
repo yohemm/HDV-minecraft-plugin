@@ -1,0 +1,33 @@
+name: HDV
+version: '${project.version}'
+main: fr.yohem.hdv.HDV
+commands:
+  hdv:
+    description: access a l'hdv
+    usages: Mauvais utilisation de la commande.
+    permission: hdv.help
+permissions:
+  hdv.help:
+    description: acces to hdv help
+    default: true
+  hdv.use:
+    description: acces to hdv help
+    default: true
+    children:
+      hdv.sell: true
+      hdv.buy: true
+  hdv.sell:
+    description: access to sell item in hdv
+    default: true
+  hdv.buy:
+    description: access to sell item in hdv
+    default: true
+  hdv.whitelist:
+    default: op
+    children:
+      hdv.use: true
+  hdv.admin:
+    default: op
+    children:
+      hdv.use: true
+      hdv.whitelist: true
