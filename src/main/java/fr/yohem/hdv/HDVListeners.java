@@ -1,5 +1,6 @@
 package fr.yohem.hdv;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,16 +44,19 @@ public class HDVListeners implements Listener {
                     hdvPlayer.menuRedirect("0",hdv);
                 }
                 if (currentItem.getType().equals(Material.STAINED_GLASS)) {
+
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())){
                         player.sendMessage("Page suivante");
                         if (p <= hdv.menuManager.getMaxPageHdv())
                             hdvPlayer.setMenuStatus(p + 1 + "");
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
                         player.sendMessage("Page Precendante");
                         if (p > 0)
                             hdvPlayer.setMenuStatus(p - 1 + "");
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())){
                         player.sendMessage("Actualiser la page");
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
@@ -66,8 +70,9 @@ public class HDVListeners implements Listener {
                         player.sendMessage("Voir les expirations");
                         hdvPlayer.setMenuStatus("expiration");
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
-                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_VENTES.getDisplayName())){
 
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_VENTES.getDisplayName())){
+                        hdvPlayer.menuRedirect("mysell",hdv);
                     }
                 }
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
@@ -80,6 +85,7 @@ public class HDVListeners implements Listener {
                 player.updateInventory();
 
 
+
             } else if (event.getView().getTitle().equals("§8 Confirmation d'achat")) {
                 ItemSell itemSell = hdv.menuManager.findItemSell(inv.getItem(9*2+4));
                 if (itemSell == null){
@@ -87,6 +93,7 @@ public class HDVListeners implements Listener {
                     hdvPlayer.menuRedirect("0",hdv);
                 }
                 if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null) {
+
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACHETER.getDisplayName())){
 
                         if (hdvPlayer.amout >= itemSell.getPrice()) {
@@ -108,6 +115,7 @@ public class HDVListeners implements Listener {
                         }else {
                             player.sendMessage("Vous n'avez pas assez de Berry!");
                         }
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETOUR.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);
 
@@ -117,6 +125,7 @@ public class HDVListeners implements Listener {
                 player.updateInventory();
 
 
+
             } else if (event.getView().getTitle().equals("§8 Mes Expirations")) {
                 int p = hdvPlayer.getPage();
                 if (p<0){
@@ -124,38 +133,35 @@ public class HDVListeners implements Listener {
                     p=0;
                 }
                 if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
+
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())) {
-                        player.sendMessage("Page Suivante");
                         if (p < hdv.menuManager.findItemExpiredOfSeller(player).size()/(MenuManager.MAX_ITEMSELL_PER_PAGE-1)+1)
                             hdvPlayer.setMenuStatus("expiration/"+(p + 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
-                        player.sendMessage("Page Precendante");
                         if (p > 0)
                             hdvPlayer.setMenuStatus("expiration/"+ (p - 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_HDV.getDisplayName())){
                         hdvPlayer.menuRedirect("0", hdv);
+
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_VENTES.getDisplayName())){
-                        hdvPlayer.menuRedirect("ventes", hdv);
+                        hdvPlayer.menuRedirect("mysell", hdv);
 
                     }
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
                 if (iS != null) {
-                    if (!player.getInventory().addItem(iS.getItem()).isEmpty()){
-                        List<ItemSell> itemSells = hdv.menuManager.getItemsInHdv();
-                        if(!itemSells.remove(iS)){
-                            System.out.println("Impossible d'enlever un item du shop!");
-                        }
-                    }else {
-                        player.sendMessage("inventaire rempli");
-                    }
                     // click sur item en Vente
+                    player.openInventory(hdv.menuManager.menuConfirmationRecuperation(iS));
                 }
                 event.setCancelled(true);
                 player.updateInventory();
+
 
 
             } else if (event.getView().getTitle().equals("§8 Hotel des Dragons Celeste")) {
@@ -183,7 +189,7 @@ public class HDVListeners implements Listener {
                         hdvPlayer.menuRedirect("0", hdv);
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_VENTES.getDisplayName())){
-                        hdvPlayer.menuRedirect("ventes", hdv);
+                        hdvPlayer.menuRedirect("mysell", hdv);
 
                     }
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
@@ -196,6 +202,7 @@ public class HDVListeners implements Listener {
                 player.updateInventory();
 
 
+
             } else if (event.getView().getTitle().equals("§8 Confirmation d'anulation de vente")) {
                 ItemSell itemSell = hdv.menuManager.findItemSell(inv.getItem(9*2+4));
                 if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
@@ -206,14 +213,120 @@ public class HDVListeners implements Listener {
                         hdvPlayer.menuBackRedirect(hdv);
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETOUR.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);
+                    }else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.INSPECTER.getDisplayName())){
+                        hdvPlayer.menuRedirect(itemSell.getPlayer().getPlayer().getName(),hdv);
                     }
                 event.setCancelled(true);
                 player.updateInventory();
 
 
+
+            } else if (event.getView().getTitle().equals("§8 Confirmation récupération de vente")) {
+                ItemSell itemSell = hdv.menuManager.findItemSell(inv.getItem(9*2+4));
+                if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
+                    if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RECUPERER.getDisplayName())) {
+                        if(hdv.menuManager.getItemsInHdv().remove(itemSell)){
+                            if (player.getInventory().addItem(currentItem).isEmpty())
+                                itemSell.getPlayer().getPlayer().sendMessage("Vous venez de recuperer un de vos items");
+                            else
+                                itemSell.getPlayer().getPlayer().sendMessage("Impossible de recuperer un de vos items");
+                            hdvPlayer.menuBackRedirect(hdv);
+                        }
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETOUR.getDisplayName())){
+                        hdvPlayer.menuBackRedirect(hdv);
+                    }
+                event.setCancelled(true);
+                player.updateInventory();
+
+
+
             } else if (event.getView().getTitle().equals("§8 Mes ventes")){
+                System.out.println("dans menu vente");
+                String[] allString = hdvPlayer.getMenuStatus().split("/");
+
+                int p = hdvPlayer.getPage();
+                if (p<0){
+                    hdvPlayer.menuRedirect(allString[0]+"/0",hdv);
+                    p=0;
+                }
+
+                if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
+                    if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())) {
+                        player.sendMessage("Page Suivante");
+                        if (p < hdv.menuManager.findItemExpiredOfSeller(player).size()/(MenuManager.MAX_ITEMSELL_PER_PAGE-1)+1)
+                            hdvPlayer.setMenuStatus(allString[0]+"/"+(p + 1));
+                        player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
+                        player.sendMessage("Page Precendante");
+                        if (p > 0)
+                            hdvPlayer.setMenuStatus(allString[0]+"/"+ (p - 1));
+                        player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())){
+                        hdvPlayer.menuBackRedirect(hdv);
+
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_HDV.getDisplayName())){
+                        hdvPlayer.menuRedirect("0", hdv);
+
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_EXPIRATION.getDisplayName())){
+                        hdvPlayer.menuRedirect("expiration", hdv);
+
+                    }
+
+                ItemSell iS = hdv.menuManager.findItemSell(currentItem);
+                if (iS != null) {
+                    // click sur item en Vente
+                    player.sendMessage("Récuperation ténté sur " + iS.getItem().getType().name());
+                    player.openInventory(hdv.menuManager.menuConfirmationRecuperation(iS));
+                }
+                event.setCancelled(true);
+                player.updateInventory();
+
+
+
 
             } else if (event.getView().getTitle().equals("§8 Inspection Joueur")){
+
+                int p = hdvPlayer.getPage();
+                if (p<0){
+                    hdvPlayer.menuRedirect("mysell/0",hdv);
+                    p=0;
+                }
+
+                if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
+
+                    if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())) {
+                        player.sendMessage("Page Suivante");
+                        if (p < hdv.menuManager.findItemExpiredOfSeller(player).size()/(MenuManager.MAX_ITEMSELL_PER_PAGE-1)+1)
+                            hdvPlayer.setMenuStatus("mysell/"+(p + 1));
+                        player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
+                        player.sendMessage("Page Precendante");
+                        if (p > 0)
+                            hdvPlayer.setMenuStatus("mysell/"+ (p - 1));
+                        player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())){
+                        hdvPlayer.menuBackRedirect(hdv);
+
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_HDV.getDisplayName())){
+                        hdvPlayer.menuRedirect("0", hdv);
+
+                    } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_EXPIRATION.getDisplayName())){
+                        hdvPlayer.menuRedirect("expiration", hdv);
+
+                    }
+
+                ItemSell iS = hdv.menuManager.findItemSell(currentItem);
+                if (iS != null) {
+                    // click sur item en Vente
+                    player.sendMessage("Récuperation ténté sur " + iS.getItem().getType().name());
+                    player.openInventory(hdv.menuManager.menuConfirmationAnulation(iS));
+                }
+
+                event.setCancelled(true);
+                player.updateInventory();
+                event.setCancelled(true);
+                player.updateInventory();
 
             }
         }

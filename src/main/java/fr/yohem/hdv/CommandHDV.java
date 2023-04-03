@@ -92,7 +92,7 @@ public class CommandHDV implements CommandExecutor {
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {
                                 if (p.getPlayer().getName().equals(args[0])){
                                     System.out.println("view");
-                                    hdvplayer.menuRedirect("mysell", hdvPlug);
+                                    hdvplayer.menuRedirect(p.getPlayer().getName(), hdvPlug);
                                 }
                             }
                             break;

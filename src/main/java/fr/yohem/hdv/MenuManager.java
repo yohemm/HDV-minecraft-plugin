@@ -21,6 +21,7 @@ public class MenuManager {
         INFO("A propos de l'HDV"),
         RETOUR("Retour en arriére"),
         RETIRIRER("Retirer de l'hdv"),
+        RECUPERER("Recuperer l'item"),
         INSPECTER("Inspecter le Joueur");
         private String displayName;
 
@@ -117,8 +118,8 @@ public class MenuManager {
 
         } else {
             for(HDVPlayer hP: hdvPlug.hdvPlayers){
-                if(hP.getPlayer().getName().equals(hdvPlayer.getMenuStatus()))
-                return menuInspectionPlayer(hdvPlayer);
+                if(hP.getPlayer().getName().contains(hdvPlayer.getMenuStatus()))
+                    return menuInspectionPlayer(hdvPlayer);
             }
             int p = hdvPlayer.getPage();
             if (p>=0){
@@ -169,8 +170,16 @@ public class MenuManager {
     }
     public Inventory menuConfirmationAnulation(ItemSell itemSell){
         Inventory inv = hdvPlug.getServer().createInventory(null,45, "§8 Confirmation d'anulation de vente");
+        inv.setItem(4, new ItemGenerator(Material.SKULL_ITEM).setSkullPlayer(itemSell.getPlayer().getPlayer()).setName(ButtonAction.INSPECTER.getDisplayName()).generate());
         inv.setItem(9*2+4, itemSell.getItemWithDesc());
         addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.RETIRIRER.displayName);
+
+        return inv;
+    }
+    public Inventory menuConfirmationRecuperation(ItemSell itemSell){
+        Inventory inv = hdvPlug.getServer().createInventory(null,45, "§8 Confirmation récupération de vente");
+        inv.setItem(9*2+4, itemSell.getItemWithDesc());
+        addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.RECUPERER.displayName);
 
         return inv;
     }
@@ -289,7 +298,7 @@ public class MenuManager {
             page = Integer.parseInt(spliter[1]);
         }else hdvPlayer.setMenuStatus(spliter[0]+"/0");
         HDVPlayer playerToInspect = hdvPlug.findHdvPlayer(spliter[0]);
-        if (playerToInspect != null){
+        if (playerToInspect == null){
             hdvPlayer.getPlayer().sendMessage("Joueur non trouvé");
             hdvPlayer.setMenuStatus("0");
             return generateInv(hdvPlayer);
@@ -330,6 +339,8 @@ public class MenuManager {
         List<String> infos = new  ArrayList<>();
         infos.add("L'hotel de ventes est accessible uniquement via le courtier");
         inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
+        inv.setItem(7, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_EXPIRATION.displayName).generate());
+        inv.setItem(8, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_HDV.displayName).generate());
         List<ItemSell>itemSells = findItemSellableOfSeller(hdvPlayer.getPlayer());
         addButtonNavigation(page,itemSells.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
 
