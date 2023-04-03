@@ -16,6 +16,10 @@ public final class HDV extends JavaPlugin {
         List<HDVPlayer> hdvPlayers = this.hdvPlayers.stream().filter(hdvP -> hdvP.getPlayer().equals(player)).collect(Collectors.toList());
         return hdvPlayers!=null&& !hdvPlayers.isEmpty()?hdvPlayers.get(0):null;
     }
+    public HDVPlayer findHdvPlayer(String playerName){
+        List<HDVPlayer> hdvPlayers = this.hdvPlayers.stream().filter(hdvP -> hdvP.getPlayer().getName().equals(playerName)).collect(Collectors.toList());
+        return hdvPlayers!=null&& !hdvPlayers.isEmpty()?hdvPlayers.get(0):null;
+    }
 
     @Override
     public void onEnable() {

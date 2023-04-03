@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemSell {
+    final static long EXPIRATION_DELAY =604800000;
     private ItemStack item;
     private HDVPlayer player;
     private double price;
@@ -33,7 +34,7 @@ public class ItemSell {
         return item;
     }
     public boolean isExpired(){
-        return new Date().getTime() - date > 604800000;
+        return new Date().getTime() - date > EXPIRATION_DELAY;
     }
     public ItemStack getItemWithDesc(){
         ItemStack it = item.clone();
@@ -41,7 +42,7 @@ public class ItemSell {
         List<String> infos = meta.getLore()==null?new ArrayList<>():meta.getLore();
         long timeDiff = new Date().getTime() - date;
         if (!isExpired()){
-            Duration duration = Duration.ofMillis(604800000-timeDiff);
+            Duration duration = Duration.ofMillis(EXPIRATION_DELAY-timeDiff);
             long d = duration.toDays();
             long h = duration.toHours()%24;
             long m = duration.toMinutes()%60;
@@ -49,7 +50,7 @@ public class ItemSell {
             infos.add("Prix : "+ price + "$");
             infos.add("Expire dans : "+d+" jours, "+h+" heures et "+m+" minutes");
         }else {
-            Duration duration = Duration.ofMillis(timeDiff-604800000);
+            Duration duration = Duration.ofMillis(timeDiff-EXPIRATION_DELAY);
             long d = duration.toDays();
             long h = duration.toHours()%24;
             long m = duration.toMinutes()%60;
@@ -67,5 +68,9 @@ public class ItemSell {
 
     public double getPrice() {
         return price;
+    }
+
+    public void setDate(long i) {
+        date= i;
     }
 }

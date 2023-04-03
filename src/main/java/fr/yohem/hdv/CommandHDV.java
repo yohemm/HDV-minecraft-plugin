@@ -1,14 +1,12 @@
 package fr.yohem.hdv;
 
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CommandHDV implements CommandExecutor {
@@ -47,6 +45,10 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("L'item que vous souhaitez mettre en vente n'est pas autoriser");
                                     return false;
                                 }
+                                if (hdvPlug.menuManager.getBlackList().contains(item.getType())){
+                                    player.sendMessage("Item Interdsit a la vente");
+                                    return false;
+                                }
                                 hdvPlug.menuManager.addItemSellInHdv(new ItemSell(item, hdvplayer, amout));
                                 player.sendMessage("Vous avez mis en ventes " + item.getAmount() + " " + item.getType().name() + " aux prix de " + amout);
                                 return true;
@@ -56,20 +58,48 @@ public class CommandHDV implements CommandExecutor {
                             break;
                         case "whitelist":
                             System.out.println("whitelist");
+                            if (args.length == 2){
+                                if (args[1].equalsIgnoreCase("add")){
+                                    if (player.getInventory().getItemInMainHand() != null) {
+                                        if (hdvPlug.menuManager.getBlackList().remove(player.getInventory().getItemInMainHand().getType()))
+                                            player.sendMessage("Action effectuer");
+                                    }else
+                                        player.sendMessage("Vous devez avoir un item dans votre main");
+
+                                }else if(args[1].equalsIgnoreCase("rem")){
+                                    if (player.getInventory().getItemInMainHand() != null) {
+                                        if (hdvPlug.menuManager.getBlackList().add(player.getInventory().getItemInMainHand().getType())) {
+                                            player.sendMessage("Action effectuer");
+                                            List<ItemSell> itemSellList = hdvPlug.menuManager.getItemsInHdv();
+                                            for (ItemSell itemSell : hdvPlug.menuManager.getItemsInHdv())
+                                                if (!itemSell.isExpired() && hdvPlug.menuManager.getBlackList().contains(itemSell.getItem().getType())){
+                                                    itemSell.setDate(new Date().getTime()-ItemSell.EXPIRATION_DELAY);
+                                                }
+                                        }
+                                    }else
+                                        player.sendMessage("Vous devez avoir un item dans votre main");
+                                }else {
+                                    player.sendMessage("Mauvaise utilisation : /hdv whitelist [rem/add]");
+                                }
+                            }
                             break;
                         case "admin":
+                            hdvplayer.setMenuStatus("admin");
+                            player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
                             System.out.println("admin");
                             break;
                         default:
-                            for (Player p : hdvPlug.getServer().getOnlinePlayers()) {
-                                if (p.getName().equals(args[1]))
+                            for (HDVPlayer p : hdvPlug.hdvPlayers) {
+                                if (p.getPlayer().getName().equals(args[0])){
                                     System.out.println("view");
+                                    hdvplayer.menuRedirect("mysell", hdvPlug);
+                                }
                             }
                             break;
                     }
                 } else {
-                    System.out.println("open I,ventory");
-                    player.openInventory(hdvPlug.menuManager.generateHdvInv(0));
+                    hdvplayer.setMenuStatus("0");
+                    player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
                     player.updateInventory();
                 }
             }

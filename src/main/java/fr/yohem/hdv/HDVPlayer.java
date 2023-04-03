@@ -24,11 +24,20 @@ public class HDVPlayer {
         this.menuStatus = menuStatus;
         player.openInventory(hdv.menuManager.generateInv(this));
     }
+    public void menuBackRedirect(HDV hdv){
+        player.openInventory(hdv.menuManager.generateInv(this));
+    }
 
     public HDVPlayer(Player player) {
         this.player = player;
     }
     public int getPage(){
+        String[] spliter = menuStatus.split("/");
+        String page;
+        if (spliter.length>1){
+            page = spliter[1];
+        }else
+            page = spliter[0];
         try{
             return Integer.parseInt(menuStatus);
         }catch (NumberFormatException exception) {
