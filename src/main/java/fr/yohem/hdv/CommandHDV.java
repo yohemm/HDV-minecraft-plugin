@@ -86,7 +86,6 @@ public class CommandHDV implements CommandExecutor {
                         case "admin":
                             hdvplayer.setMenuStatus("admin");
                             player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
-                            System.out.println("admin");
                             break;
                         default:
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {

@@ -209,7 +209,7 @@ public class HDVListeners implements Listener {
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETIRIRER.getDisplayName())) {
                         itemSell.setDate(new Date().getTime() - 604800000);
                         itemSell.getPlayer().getPlayer().sendMessage("Un de vos items en ventes viens d'être retirer du shop par un dragon celeste");
-                        System.out.println(hdvPlayer.getMenuStatus());
+                        System.out.println("back"+hdvPlayer.getMenuStatus());
                         hdvPlayer.menuBackRedirect(hdv);
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETOUR.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);
@@ -285,10 +285,11 @@ public class HDVListeners implements Listener {
 
 
             } else if (event.getView().getTitle().equals("§8 Inspection Joueur")){
+                String status = hdvPlayer.getMenuStatus().split("/")[0];
 
                 int p = hdvPlayer.getPage();
                 if (p<0){
-                    hdvPlayer.menuRedirect("mysell/0",hdv);
+                    hdvPlayer.menuRedirect(status+"/0",hdv);
                     p=0;
                 }
 
@@ -297,13 +298,13 @@ public class HDVListeners implements Listener {
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())) {
                         player.sendMessage("Page Suivante");
                         if (p < hdv.menuManager.findItemExpiredOfSeller(player).size()/(MenuManager.MAX_ITEMSELL_PER_PAGE-1)+1)
-                            hdvPlayer.setMenuStatus("mysell/"+(p + 1));
+                            hdvPlayer.setMenuStatus(status+"/"+(p + 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
                         player.sendMessage("Page Precendante");
                         if (p > 0)
-                            hdvPlayer.setMenuStatus("mysell/"+ (p - 1));
+                            hdvPlayer.setMenuStatus(status+"/"+ (p - 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);

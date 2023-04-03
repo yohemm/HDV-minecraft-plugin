@@ -117,10 +117,12 @@ public class MenuManager {
             return menuMySell(hdvPlayer);
 
         } else {
+            System.out.println("ouiouiouiouio");
             for(HDVPlayer hP: hdvPlug.hdvPlayers){
-                if(hP.getPlayer().getName().contains(hdvPlayer.getMenuStatus()))
+                if(hdvPlayer.getMenuStatus().contains(hP.getPlayer().getName()))
                     return menuInspectionPlayer(hdvPlayer);
             }
+            System.out.println("nonononono");
             int p = hdvPlayer.getPage();
             if (p>=0){
                 return menuHotelDesVentes(p);
