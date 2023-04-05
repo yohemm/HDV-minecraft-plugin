@@ -1,19 +1,14 @@
 package fr.yohem.hdv;
 
-import jdk.jfr.Timestamp;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.sql.Time;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class ItemSell {
+public class ItemSell implements ConfigurationSerializable {
     final static long EXPIRATION_DELAY =604800000;
     private ItemStack item;
     private HDVPlayer player;
@@ -24,6 +19,13 @@ public class ItemSell {
         this.item = item;
         this.player = player;
         this.price = price;
+    }
+
+    public ItemSell(ItemStack item, HDVPlayer player, double price, long date) {
+        this.item = item;
+        this.player = player;
+        this.price = price;
+        this.date= date;
     }
 
     public long getDate() {
@@ -72,5 +74,18 @@ public class ItemSell {
 
     public void setDate(long i) {
         date= i;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map serial = new HashMap<>();
+        serial.put("item", item.serialize());
+        serial.put("player", player.serialize());
+        serial.put("price", price);
+        serial.put("date", date);
+        return null;
+    }
+    public static ItemSell deserialize(Map<String, Object> serial){
+        return new ItemSell(ItemStack.deserialize((Map)serial.get("item")), HDVPlayer.deserialize((Map) serial.get("player")), (double) serial.get("price"), (long) serial.get("date"));
     }
 }

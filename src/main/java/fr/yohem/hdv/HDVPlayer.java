@@ -1,11 +1,15 @@
 package fr.yohem.hdv;
 
-import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
-public class HDVPlayer {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class HDVPlayer implements ConfigurationSerializable {
     private String menuStatus = "";//expired, 0, 1, article
-    int amout = 500;
     private Player player;
 
     public String getMenuStatus() {
@@ -43,5 +47,16 @@ public class HDVPlayer {
         }catch (NumberFormatException exception) {
             return -1;
         }
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        Map<String, Object> serial = new HashMap<>();
+        serial.put("player", player.getUniqueId());
+        return serial;
+    }
+
+    public static HDVPlayer deserialize(Map<String, Object> serial){
+        return new HDVPlayer(Bukkit.getPlayer((UUID) serial.get("player")));
     }
 }

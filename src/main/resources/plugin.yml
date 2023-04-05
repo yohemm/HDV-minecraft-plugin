@@ -1,6 +1,8 @@
 name: HDV
 version: '${project.version}'
 main: fr.yohem.hdv.HDV
+depend:
+  - Vault
 commands:
   hdv:
     description: access a l'hdv

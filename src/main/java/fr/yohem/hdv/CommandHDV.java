@@ -49,6 +49,7 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("Item Interdsit a la vente");
                                     return false;
                                 }
+                                player.getInventory().remove(item);
                                 hdvPlug.menuManager.addItemSellInHdv(new ItemSell(item, hdvplayer, amout));
                                 player.sendMessage("Vous avez mis en ventes " + item.getAmount() + " " + item.getType().name() + " aux prix de " + amout);
                                 return true;

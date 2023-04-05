@@ -2,7 +2,6 @@ package fr.yohem.hdv;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,6 +40,12 @@ public class MenuManager {
             return null;
         }
     }
+
+    final static private ItemStack bgGlass = new ItemGenerator(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1, (byte) 0)).setName("§8[§6MineHDV§8]§r").generate();
+    final static private ItemStack gGlass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1, (byte) 13);
+    final static private ItemStack rGlass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1, (byte) 14);
+
+
     final static int MAX_ITEMSELL_PER_PAGE = 28;
     private List<ItemSell> itemsInHdv = new ArrayList<>();
 
@@ -144,53 +149,58 @@ public class MenuManager {
 
 
     private void addMenuConfirmationPatern(Inventory inv,String leftBackBtn, String rightBtn){
-        inv.setItem(9*2+2, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-        inv.setItem(9*2+1, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-        inv.setItem(9*3+2, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-        inv.setItem(9*3+1, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-        inv.setItem(9+2, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-        inv.setItem(9+1, new ItemGenerator(Material.GLASS).setName(leftBackBtn).generate());
-
-        inv.setItem(9*4, new ItemGenerator(Material.BARRIER).setName(leftBackBtn).generate());
-
-
-        inv.setItem(9*2+6, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-        inv.setItem(9*2+7, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-        inv.setItem(9*3+6, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-        inv.setItem(9*3+7, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-        inv.setItem(9+6, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-        inv.setItem(9+7, new ItemGenerator(Material.GLASS).setName(rightBtn).generate());
-
+        for (int i = 0; i<45; i++) {
+            if (Arrays.asList(9 * 2 + 2,9 * 2 + 1,9 * 3 + 2,9 * 3 + 1,9 + 2,9 + 1).contains(i))
+                inv.setItem(i, new ItemGenerator(rGlass).setName(leftBackBtn).generate());
+            else if (Arrays.asList(9 * 2 + 7,9 * 2 + 6,9 * 3 + 7,9 * 3 + 6,9 + 7,9 + 6).contains(i))
+                inv.setItem(i, new ItemGenerator(gGlass).setName(rightBtn).generate());
+            else
+                inv.setItem(i, new ItemGenerator(bgGlass).setName("").generate());
+        }
+        inv.setItem(9 * 4, new ItemGenerator(Material.BARRIER).setName(leftBackBtn).generate());
     }
 
     public Inventory menuConfirmationAchat(ItemSell itemSell){
         Inventory inv = hdvPlug.getServer().createInventory(null,45, "§8 Confirmation d'achat");
-        inv.setItem(9*2+4, itemSell.getItemWithDesc());
         addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.ACHETER.displayName);
+        inv.setItem(9*2+4, itemSell.getItemWithDesc());
 
         return inv;
     }
     public Inventory menuConfirmationAnulation(ItemSell itemSell){
         Inventory inv = hdvPlug.getServer().createInventory(null,45, "§8 Confirmation d'anulation de vente");
+        addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.RETIRIRER.displayName);
         inv.setItem(4, new ItemGenerator(Material.SKULL_ITEM).setSkullPlayer(itemSell.getPlayer().getPlayer()).setName(ButtonAction.INSPECTER.getDisplayName()).generate());
         inv.setItem(9*2+4, itemSell.getItemWithDesc());
-        addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.RETIRIRER.displayName);
 
         return inv;
     }
     public Inventory menuConfirmationRecuperation(ItemSell itemSell){
         Inventory inv = hdvPlug.getServer().createInventory(null,45, "§8 Confirmation récupération de vente");
-        inv.setItem(9*2+4, itemSell.getItemWithDesc());
         addMenuConfirmationPatern(inv,ButtonAction.RETOUR.displayName, ButtonAction.RECUPERER.displayName);
+        inv.setItem(9*2+4, itemSell.getItemWithDesc());
 
         return inv;
     }
     public void addButtonNavigation(int page, int maxPage, Inventory inv){
+        for (int i=0; i < 9; i++){
+            inv.setItem(i, bgGlass);
+            inv.setItem(inv.getSize()-(i+1), bgGlass);
+        }
+        inv.setItem(9, bgGlass);
+        inv.setItem(17, bgGlass);
+        inv.setItem(18, bgGlass);
+        inv.setItem(26, bgGlass);
+        inv.setItem(27, bgGlass);
+        inv.setItem(35, bgGlass);
+        inv.setItem(36, bgGlass);
+        inv.setItem(44, bgGlass);
+
         if (page <  maxPage)
             inv.setItem(50, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.SUIVANT.displayName).generate());
         if (page > 0)
             inv.setItem(48, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.PRECENDANT.displayName).generate());
-        inv.setItem(49, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.ACTUALISER.displayName).setLore(Arrays.asList("Page "+(page+1)+" sur "+(maxPage+1))).generate());
+        inv.setItem(49, new ItemGenerator(new ItemStack(Material.DOUBLE_PLANT, 1, (short) 1, (byte) 0)).setName(ButtonAction.ACTUALISER.displayName).setLore(Arrays.asList("Page "+(page+1)+" sur "+(maxPage+1))).generate());
 
     }
 
@@ -208,15 +218,15 @@ public class MenuManager {
         verifyPage(page, itemExpired.size()/(MAX_ITEMSELL_PER_PAGE-1));
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         addButtonNavigation(page,itemExpired.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
-        inv.setItem(7, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_HDV.displayName).generate());
-        inv.setItem(8, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_VENTES.displayName).generate());
+        inv.setItem(7, new ItemGenerator(new ItemStack(Material.BED, 1)).setName(ButtonAction.NAV_HDV.displayName).generate());
+        inv.setItem(8, new ItemGenerator(new ItemStack(Material.POTION, 1)).setName(ButtonAction.NAV_VENTES.displayName).generate());
         List<String> infos = new ArrayList<>();
         infos.add("Les expirations sont des articles mis en ventes");
         infos.add("qui n'ont pas trouvé d'acheteur aprés une semaine");
         infos.add("Vous pouvez les récupérer en le selectionant");
         infos.add("Astuce : Si votre article n'as pas trouvé d'acheteur");
         infos.add("c'est que sont prix est surment trop élevé!");
-        inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
+        inv.setItem(0, new ItemGenerator(new ItemStack(Material.SIGN, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
 
         int itemSellPos = 10;
         for(int j = 0; j<4; j++){
@@ -237,13 +247,13 @@ public class MenuManager {
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         verifyPage(page, getMaxPageHdv());
         Inventory inv = hdvPlug.getServer().createInventory(null, 54, "§8 Hotel de ventes");
-        inv.setItem(7, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_VENTES.displayName).generate());
-        inv.setItem(8, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_EXPIRATION.displayName).generate());
-        List<String> infos = new ArrayList<>();
-        infos.add("L'hotel de ventes est accessible uniquement via le courtier");
-        inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
         List<ItemSell>itemSellable = getItemSellable();
         addButtonNavigation(page,itemSellable.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
+        inv.setItem(7, new ItemGenerator(new ItemStack(Material.POTION, 1)).setName(ButtonAction.NAV_VENTES.displayName).generate());
+        inv.setItem(8, new ItemGenerator(new ItemStack(Material.GLASS_BOTTLE, 1)).setName(ButtonAction.NAV_EXPIRATION.displayName).generate());
+        List<String> infos = new ArrayList<>();
+        infos.add("L'hotel de ventes est accessible uniquement via le courtier");
+        inv.setItem(0, new ItemGenerator(new ItemStack(Material.SIGN, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
 
         int itemSellPos = 10;
         for(int j = 0; j<4; j++){
@@ -268,12 +278,12 @@ public class MenuManager {
             page = Integer.parseInt(hdvPlayer.getMenuStatus().split("/")[1]);
         }else hdvPlayer.setMenuStatus("admin/0");
         verifyPage(page, getMaxPageHdv());
+        List<ItemSell>itemSellable = getItemSellable();
+        addButtonNavigation(page,itemSellable.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         List<String> infos = new ArrayList<>();
         infos.add("L'hotel de ventes est accessible uniquement via le courtier");
-        inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
-        List<ItemSell>itemSellable = getItemSellable();
-        addButtonNavigation(page,itemSellable.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
+        inv.setItem(0, new ItemGenerator(new ItemStack(Material.SIGN, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
 
         int itemSellPos = 10;
         for(int j = 0; j<4; j++){
@@ -306,13 +316,13 @@ public class MenuManager {
             return generateInv(hdvPlayer);
 
         }
+        List<ItemSell>itemSells = findItemOfSeller(playerToInspect.getPlayer());
+        addButtonNavigation(page,itemSells.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
         verifyPage(page, getMaxPageHdv());
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         List<String> infos = new  ArrayList<>();
         infos.add("L'hotel de ventes est accessible uniquement via le courtier");
-        inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
-        List<ItemSell>itemSells = findItemOfSeller(playerToInspect.getPlayer());
-        addButtonNavigation(page,itemSells.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
+        inv.setItem(0, new ItemGenerator(new ItemStack(Material.SIGN, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
 
         int itemSellPos = 10;
         for(int j = 0; j<4; j++){
@@ -337,14 +347,14 @@ public class MenuManager {
             page = Integer.parseInt(spliter[1]);
         }else hdvPlayer.setMenuStatus("mysell/"+0);
         verifyPage(page, getMaxPageHdv());
+        List<ItemSell>itemSells = findItemSellableOfSeller(hdvPlayer.getPlayer());
+        addButtonNavigation(page,itemSells.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         List<String> infos = new  ArrayList<>();
         infos.add("L'hotel de ventes est accessible uniquement via le courtier");
-        inv.setItem(0, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
-        inv.setItem(7, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_EXPIRATION.displayName).generate());
-        inv.setItem(8, new ItemGenerator(new ItemStack(Material.STAINED_GLASS, 1)).setName(ButtonAction.NAV_HDV.displayName).generate());
-        List<ItemSell>itemSells = findItemSellableOfSeller(hdvPlayer.getPlayer());
-        addButtonNavigation(page,itemSells.size()/(MAX_ITEMSELL_PER_PAGE-1) ,inv);
+        inv.setItem(0, new ItemGenerator(new ItemStack(Material.SIGN, 1)).setName(ButtonAction.INFO.displayName).setLore(infos).generate());
+        inv.setItem(7, new ItemGenerator(new ItemStack(Material.GLASS_BOTTLE, 1)).setName(ButtonAction.NAV_EXPIRATION.displayName).generate());
+        inv.setItem(8, new ItemGenerator(new ItemStack(Material.BED, 1)).setName(ButtonAction.NAV_HDV.displayName).generate());
 
         int itemSellPos = 10;
         for(int j = 0; j<4; j++){
