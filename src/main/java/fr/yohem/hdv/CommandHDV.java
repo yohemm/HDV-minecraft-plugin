@@ -1,11 +1,13 @@
 package fr.yohem.hdv;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +19,15 @@ public class CommandHDV implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        System.out.println(Arrays.asList(args));
+        if (args.length >= 2 && args[0].toLowerCase().equals("open")) {
+            for (Player pl : Bukkit.getOnlinePlayers())
+                if (pl.getName().equals(args[1])) {
+                    System.out.println(pl.getName() + " Open HDV via inv");
+                    hdvPlug.findHdvPlayer(pl).menuRedirect("0", hdvPlug);
+                }
+            System.out.println("aaa");
+        }
         if (sender instanceof Player) {
             HDVPlayer hdvplayer;
             hdvplayer = hdvPlug.findHdvPlayer((Player) sender);
@@ -24,7 +35,7 @@ public class CommandHDV implements CommandExecutor {
                 Player player = hdvplayer.getPlayer();
                 if (args.length >= 1) {
                     System.out.println(args[0]);
-                    switch (args[0]) {
+                    switch (args[0].toLowerCase()) {
                         case "sell":
                             if (args.length == 2) {
                                 int amout;
@@ -92,7 +103,6 @@ public class CommandHDV implements CommandExecutor {
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {
                                 if (p.getPlayer().getName().equals(args[0])){
                                     System.out.println("view");
-                                    hdvplayer.menuRedirect(p.getPlayer().getName(), hdvPlug);
                                 }
                             }
                             break;

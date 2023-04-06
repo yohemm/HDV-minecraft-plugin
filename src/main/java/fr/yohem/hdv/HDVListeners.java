@@ -78,7 +78,7 @@ public class HDVListeners implements Listener {
                 if (iS != null) {
 //                    Renvoi sur menu confitmation
                     player.sendMessage("achat tenté sur " + iS.getItem().getType().name());
-                    player.openInventory(hdv.menuManager.menuConfirmationAchat(iS));
+                    selectItem(iS,player, hdv.menuManager.menuConfirmationAchat(iS));
                 }
                 event.setCancelled(true);
                 player.updateInventory();
@@ -196,8 +196,8 @@ public class HDVListeners implements Listener {
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
                 if (iS != null) {
                     // click sur item en Vente
-                    player.sendMessage("Anulation de mise en vente tenté sur " + iS.getItem().getType().name());
-                    player.openInventory(hdv.menuManager.menuConfirmationAnulation(iS));
+                    player.sendMessage("Anulation de mise en vente tenté sur " + iS.getItem().getType().name()+" de "+ Bukkit.getOfflinePlayer(iS.getPlayer()).getName());
+                    selectItem(iS,player, hdv.menuManager.menuConfirmationAnulation(iS));
                 }
                 event.setCancelled(true);
                 player.updateInventory();
@@ -334,6 +334,13 @@ public class HDVListeners implements Listener {
 
             }
         }
+    }
+
+    public void selectItem(ItemSell iS,Player player, Inventory menuBasic){
+        if(player.getUniqueId().equals(iS.getPlayer())){
+            player.openInventory(hdv.menuManager.menuConfirmationRecuperation(iS));
+        }else
+            player.openInventory(menuBasic);
     }
 
     @EventHandler
