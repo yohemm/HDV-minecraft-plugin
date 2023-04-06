@@ -32,6 +32,7 @@ public class ItemGenerator{
     }
     public ItemGenerator setName(String name){
         meta.setDisplayName(name);
+        item.setItemMeta(meta);
         return this;
     }
     public ItemGenerator setSkullPlayer(Player player){

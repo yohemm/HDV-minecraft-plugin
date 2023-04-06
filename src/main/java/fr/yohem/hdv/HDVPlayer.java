@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -38,13 +39,17 @@ public class HDVPlayer implements ConfigurationSerializable {
     public int getPage(){
         String[] spliter = menuStatus.split("/");
         String page;
+        System.out.println(Arrays.asList(spliter));
         if (spliter.length>1){
             page = spliter[1];
+            System.out.println(page);
         }else
             page = spliter[0];
         try{
-            return Integer.parseInt(menuStatus);
+
+            return Integer.parseInt(page);
         }catch (NumberFormatException exception) {
+            System.out.println("a");
             return -1;
         }
     }
@@ -52,7 +57,7 @@ public class HDVPlayer implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> serial = new HashMap<>();
-        serial.put("player", player.getUniqueId());
+        serial.put("player", player.getUniqueId().toString());
         return serial;
     }
 

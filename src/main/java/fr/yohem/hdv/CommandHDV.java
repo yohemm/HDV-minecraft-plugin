@@ -41,7 +41,7 @@ public class CommandHDV implements CommandExecutor {
                                     return false;
                                 }
                                 ItemStack item = player.getInventory().getItemInMainHand();
-                                if (item == null) {
+                                if (item == null || hdvPlug.menuManager.getBlackList().contains(item.getType())) {
                                     player.sendMessage("L'item que vous souhaitez mettre en vente n'est pas autoriser");
                                     return false;
                                 }
@@ -49,8 +49,8 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("Item Interdsit a la vente");
                                     return false;
                                 }
-                                player.getInventory().remove(item);
-                                hdvPlug.menuManager.addItemSellInHdv(new ItemSell(item, hdvplayer, amout));
+                                player.getInventory().removeItem(item);
+                                hdvPlug.menuManager.addItemSellInHdv(new ItemSell(item, player.getUniqueId(), amout));
                                 player.sendMessage("Vous avez mis en ventes " + item.getAmount() + " " + item.getType().name() + " aux prix de " + amout);
                                 return true;
                             } else {
@@ -63,14 +63,14 @@ public class CommandHDV implements CommandExecutor {
                                 if (args[1].equalsIgnoreCase("add")){
                                     if (player.getInventory().getItemInMainHand() != null) {
                                         if (hdvPlug.menuManager.getBlackList().remove(player.getInventory().getItemInMainHand().getType()))
-                                            player.sendMessage("Action effectuer");
+                                            player.sendMessage("Possibilté ajouté");
                                     }else
                                         player.sendMessage("Vous devez avoir un item dans votre main");
 
                                 }else if(args[1].equalsIgnoreCase("rem")){
                                     if (player.getInventory().getItemInMainHand() != null) {
                                         if (hdvPlug.menuManager.getBlackList().add(player.getInventory().getItemInMainHand().getType())) {
-                                            player.sendMessage("Action effectuer");
+                                            player.sendMessage("Possibilté supprimer");
                                             List<ItemSell> itemSellList = hdvPlug.menuManager.getItemsInHdv();
                                             for (ItemSell itemSell : hdvPlug.menuManager.getItemsInHdv())
                                                 if (!itemSell.isExpired() && hdvPlug.menuManager.getBlackList().contains(itemSell.getItem().getType())){

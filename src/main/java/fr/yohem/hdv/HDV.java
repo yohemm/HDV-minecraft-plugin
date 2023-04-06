@@ -1,6 +1,8 @@
 package fr.yohem.hdv;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,15 +28,23 @@ public final class HDV extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        ConfigurationSerialization.registerClass(ItemSell.class);
         if (!setupEconomy() ) {
             System.out.println("PLUGIN HDV FAIL BEACAUSE VAULT NOT LOAD");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         System.out.println("HDV OPEN");
+        menuManager.update(ItemSell.importItems(this));
         for (Player p : getServer().getOnlinePlayers()){
             hdvPlayers.add(new HDVPlayer(p));
         }
+
+        /*LOAD YML for get hdvPlayers and Itemsells*/
+
+
+
         getCommand("hdv").setExecutor(new CommandHDV(this));
         getServer().getPluginManager().registerEvents(new HDVListeners(this), this);
         // Plugin startup logic
@@ -43,8 +53,16 @@ public final class HDV extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (ItemSell itemSell: menuManager.getItemsInHdv()){
+            ItemSell.export(this, menuManager.getItemsInHdv());
+        }
         System.out.println("HDV CLOSE");
         // Plugin shutdown logic
+    }
+
+    @Override
+    public void  onLoad(){
+        ConfigurationSerialization.registerClass(ItemSell.class);
     }
 
     private boolean setupEconomy() {
