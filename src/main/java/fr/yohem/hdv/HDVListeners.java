@@ -38,7 +38,7 @@ public class HDVListeners implements Listener {
             Player player = (Player) event.getWhoClicked();
             HDVPlayer hdvPlayer = hdv.findHdvPlayer(player);
 
-            if (event.getView().getTitle().equals("§8 Hotel de ventes")) {
+            if (event.getView().getTitle().equals("§8 Hôtel des ventes")) {
                 int p = hdvPlayer.getPage();
                 if (p < 0) {
                     hdvPlayer.menuRedirect("0", hdv);
@@ -165,7 +165,7 @@ public class HDVListeners implements Listener {
 
 
 
-            } else if (event.getView().getTitle().equals("§8 Hotel des Dragons Celeste")) {
+            } else if (event.getView().getTitle().equals("§8 Hôtel des Dragons Céleste")) {
 
                 int p = hdvPlayer.getPage();
                 if (p<0){
@@ -204,9 +204,13 @@ public class HDVListeners implements Listener {
 
 
 
-            } else if (event.getView().getTitle().equals("§8 Confirmation d'anulation de vente")) {
+            } else if (event.getView().getTitle().equals("§8 Confirmation d'annulation de vente")) {
                 ItemSell itemSell = hdv.menuManager.findItemSell(inv.getItem(9*2+4));
-                if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
+                if (itemSell == null){
+                    player.sendMessage("Erreur lors de la selection d'article");
+                    hdvPlayer.menuBackRedirect(hdv);
+                }
+                if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null && itemSell!=null)
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETIRIRER.getDisplayName())) {
                         itemSell.setDate(new Date().getTime() - 604800000);
                         Bukkit.getPlayer(itemSell.getPlayer()).sendMessage("Un de vos items en ventes viens d'être retirer du shop par un dragon celeste");
@@ -224,6 +228,10 @@ public class HDVListeners implements Listener {
 
             } else if (event.getView().getTitle().equals("§8 Confirmation récupération de vente")) {
                 ItemSell itemSell = hdv.menuManager.findItemSell(inv.getItem(9*2+4));
+                if (itemSell == null){
+                    player.sendMessage("Erreur lors de la selection d'article");
+                    hdvPlayer.menuBackRedirect(hdv);
+                }
                 if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RECUPERER.getDisplayName())) {
                         if(hdv.menuManager.getItemsInHdv().remove(itemSell)){

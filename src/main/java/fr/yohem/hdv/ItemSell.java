@@ -41,26 +41,37 @@ public class ItemSell implements ConfigurationSerializable {
     public boolean isExpired(){
         return new Date().getTime() - date > EXPIRATION_DELAY;
     }
+
+    public String getLineDateDesc(){
+        long timeDiff = new Date().getTime() - date;
+        String line = "";
+        long d;
+        long h;
+        long m;
+        if (!isExpired()) {
+            Duration duration = Duration.ofMillis(EXPIRATION_DELAY-timeDiff);
+            d = duration.toDays();
+            h = duration.toHours()%24;
+            m = duration.toMinutes()%60;
+            line +="§8Expire dans : §o§7";
+        }else {
+            Duration duration = Duration.ofMillis(timeDiff-EXPIRATION_DELAY);
+            d = duration.toDays();
+            h = duration.toHours()%24;
+            m = duration.toMinutes()%60;
+            line +="§8Expiré depuis : §o§7";
+        }
+        line+= d==0?   h==0? m+" minutes§r" :h+"heures et "+m+" minutes§r": h==0?d+" jours, "+m+" minutes§r"  :d+" jours, "+h+" heures et "+m+" minutes§r";
+        return line;
+    }
     public ItemStack getItemWithDesc(){
         ItemStack it = item.clone();
         ItemMeta meta = it.getItemMeta();
         List<String> infos = meta.getLore()==null?new ArrayList<>():meta.getLore();
         long timeDiff = new Date().getTime() - date;
-        if (!isExpired()){
-            Duration duration = Duration.ofMillis(EXPIRATION_DELAY-timeDiff);
-            long d = duration.toDays();
-            long h = duration.toHours()%24;
-            long m = duration.toMinutes()%60;
-            infos.add("Vendeur : "+ Bukkit.getOfflinePlayer(player).getName());
-            infos.add("Prix : "+ price + "$");
-            infos.add("Expire dans : "+d+" jours, "+h+" heures et "+m+" minutes");
-        }else {
-            Duration duration = Duration.ofMillis(timeDiff-EXPIRATION_DELAY);
-            long d = duration.toDays();
-            long h = duration.toHours()%24;
-            long m = duration.toMinutes()%60;
-            infos.add("Expiré depuis : "+d+" jours, "+h+" heures et "+m+" minutes");
-        }
+        infos.add("§8Vendeur : §l§d"+ Bukkit.getOfflinePlayer(player).getName()+"§r");
+        infos.add("§8Prix : §n§6"+ price + "§r§8$§r");
+        infos.add(getLineDateDesc());
         meta.setLore(infos);
         it.setItemMeta(meta);
 

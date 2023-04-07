@@ -1,6 +1,7 @@
 package fr.yohem.hdv;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -11,14 +12,14 @@ import java.util.UUID;
 
 public class HDVPlayer implements ConfigurationSerializable {
     private String menuStatus = "";//expired, 0, 1, article
-    private Player player;
+    private UUID player;
 
     public String getMenuStatus() {
         return menuStatus;
     }
 
-    public Player getPlayer() {
-        return player;
+    public OfflinePlayer getPlayer() {
+        return Bukkit.getOfflinePlayer(player);
     }
 
     public void setMenuStatus(String menuStatus) {
@@ -26,15 +27,21 @@ public class HDVPlayer implements ConfigurationSerializable {
     }
 
     public void menuRedirect(String menuStatus, HDV hdv){
-        this.menuStatus = menuStatus;
-        player.openInventory(hdv.menuManager.generateInv(this));
+        OfflinePlayer p = Bukkit.getOfflinePlayer(player);
+        if ( p instanceof Player) {
+            this.menuStatus = menuStatus;
+            ((Player) p).openInventory(hdv.menuManager.generateInv(this));
+        }
     }
     public void menuBackRedirect(HDV hdv){
-        player.openInventory(hdv.menuManager.generateInv(this));
+        OfflinePlayer p = Bukkit.getOfflinePlayer(player);
+        if ( p instanceof Player) {
+            ((Player) p).openInventory(hdv.menuManager.generateInv(this));
+        }
     }
 
-    public HDVPlayer(Player player) {
-        this.player = player;
+    public HDVPlayer(OfflinePlayer player) {
+        this.player = player.getUniqueId();
     }
     public int getPage(){
         String[] spliter = menuStatus.split("/");
@@ -57,7 +64,7 @@ public class HDVPlayer implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> serial = new HashMap<>();
-        serial.put("player", player.getUniqueId().toString());
+        serial.put("player", player);
         return serial;
     }
 

@@ -32,7 +32,7 @@ public class CommandHDV implements CommandExecutor {
             HDVPlayer hdvplayer;
             hdvplayer = hdvPlug.findHdvPlayer((Player) sender);
             if (hdvplayer != null) {
-                Player player = hdvplayer.getPlayer();
+                Player player = (Player) hdvplayer.getPlayer();
                 if (args.length >= 1) {
                     System.out.println(args[0]);
                     switch (args[0].toLowerCase()) {
@@ -43,7 +43,7 @@ public class CommandHDV implements CommandExecutor {
                                     amout = Integer.parseInt(args[1]);
 
                                 } catch (IllegalArgumentException exception) {
-                                    player.sendMessage("format requi : /hdv sell <amout>, le nombre doit etre valide");
+                                    player.sendMessage("format requi : /hdv sell <amout>, le nombre doit être valide");
                                     return false;
 
                                 }
@@ -102,7 +102,7 @@ public class CommandHDV implements CommandExecutor {
                         default:
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {
                                 if (p.getPlayer().getName().equals(args[0])){
-                                    System.out.println("view");
+                                    hdvplayer.menuRedirect(p.getPlayer().getName(), hdvPlug);
                                 }
                             }
                             break;

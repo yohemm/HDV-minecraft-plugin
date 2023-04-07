@@ -1,6 +1,7 @@
 package fr.yohem.hdv;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,9 +36,11 @@ public class ItemGenerator{
         item.setItemMeta(meta);
         return this;
     }
-    public ItemGenerator setSkullPlayer(Player player){
+    public ItemGenerator setSkullPlayer(OfflinePlayer player){
         SkullMeta metaSk =(SkullMeta) meta;
         metaSk.setOwningPlayer(player);
+        meta = metaSk;
+        item.setItemMeta(metaSk);
         return this;
     }
     public ItemGenerator setLore(List<String> lore){
