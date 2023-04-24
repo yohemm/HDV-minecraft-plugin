@@ -7,9 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CommandHDV implements CommandExecutor {
     HDV hdvPlug;
@@ -19,14 +17,22 @@ public class CommandHDV implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        System.out.println(cmd.getName());
+        System.out.println(label);
         System.out.println(Arrays.asList(args));
         if (args.length >= 2 && args[0].toLowerCase().equals("open")) {
-            for (Player pl : Bukkit.getOnlinePlayers())
-                if (pl.getName().equals(args[1])) {
-                    System.out.println(pl.getName() + " Open HDV via inv");
-                    hdvPlug.findHdvPlayer(pl).menuRedirect("0", hdvPlug);
+            if (args.length == 2) {
+                if (!sender.hasPermission("hdv.commands.open")) {
+                    sender.sendMessage("Vous n'avez pas access a cette commande");
+                    return false;
                 }
-            System.out.println("aaa");
+                for (Player pl : Bukkit.getOnlinePlayers())
+                    if (pl.getName().equals(args[1])) {
+                        System.out.println(pl.getName() + " Open HDV via inv");
+                        hdvPlug.findHdvPlayer(pl).menuRedirect("0", hdvPlug);
+                    }
+                System.out.println("aaa");
+            }
         }
         if (sender instanceof Player) {
             HDVPlayer hdvplayer;
@@ -36,8 +42,22 @@ public class CommandHDV implements CommandExecutor {
                 if (args.length >= 1) {
                     System.out.println(args[0]);
                     switch (args[0].toLowerCase()) {
+                        case "help":
+                            if (player.hasPermission("hdv.commands.help"))
+                            sender.sendMessage("§m§n=============§r §6§lHotel des Ventes§r §m§n=============");
+                            for (Map.Entry<String , List<String>> commandeH : getCommands().entrySet()){
+                                if (player.hasPermission("hdv.commands."+commandeH.getKey())){
+                                    player.sendMessage("/§6hdv "+commandeH.getValue().get(0)+ "§r- §a"+commandeH.getValue().get(1));
+                                }
+                            }
+
+                            break;
                         case "sell":
                             if (args.length == 2) {
+                                if (!player.hasPermission("hdv.commands.sell")){
+                                    player.sendMessage("Vous n'avez pas access a cette commande");
+                                    return false;
+                                }
                                 int amout;
                                 try {
                                     amout = Integer.parseInt(args[1]);
@@ -69,7 +89,10 @@ public class CommandHDV implements CommandExecutor {
                             }
                             break;
                         case "whitelist":
-                            System.out.println("whitelist");
+                            if (!player.hasPermission("hdv.commands.whitelist")){
+                                player.sendMessage("Vous n'avez pas access a cette commande");
+                                return false;
+                            }
                             if (args.length == 2){
                                 if (args[1].equalsIgnoreCase("add")){
                                     if (player.getInventory().getItemInMainHand() != null) {
@@ -96,10 +119,18 @@ public class CommandHDV implements CommandExecutor {
                             }
                             break;
                         case "admin":
+                            if (!player.hasPermission("hdv.commands.admin")){
+                                player.sendMessage("Vous n'avez pas access a cette commande");
+                                return false;
+                            }
                             hdvplayer.setMenuStatus("admin");
                             player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
                             break;
                         default:
+                            if (!player.hasPermission("hdv.commands.see")){
+                                player.sendMessage("Vous n'avez pas access a cette commande");
+                                return false;
+                            }
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {
                                 if (p.getPlayer().getName().equals(args[0])){
                                     hdvplayer.menuRedirect(p.getPlayer().getName(), hdvPlug);
@@ -108,6 +139,10 @@ public class CommandHDV implements CommandExecutor {
                             break;
                     }
                 } else {
+                    if (!player.hasPermission("hdv.commands.use")){
+                        player.sendMessage("Vous n'avez pas access a cette commande");
+                        return false;
+                    }
                     hdvplayer.setMenuStatus("0");
                     player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
                     player.updateInventory();
@@ -115,6 +150,18 @@ public class CommandHDV implements CommandExecutor {
             }
         }
         return false;
+    }
+
+    public Map<String, List<String>> getCommands(){
+        Map commands = new HashMap<>();
+        commands.put("use", Arrays.asList("", "Acceder a l'hdv"));
+        commands.put("sell", Arrays.asList("sell <price> ", "Vend l'item en main a un certain prix"));
+        commands.put("help", Arrays.asList("help ", "Donne les infos sur les commandes de l'hdv"));
+        commands.put("open", Arrays.asList("open <Player> ", "Force le joueur à ouvir l'hdv"));
+        commands.put("see", Arrays.asList("<Player> ", "Inspecter les ventes du joueur"));
+        commands.put("admin", Arrays.asList("admin ", "Ouvre la page des régulation de l'hdv"));
+        commands.put("whitelist", Arrays.asList("whitelist <add | rem> ", "Force le joueur à ouvir l'hdv"));
+        return commands;
     }
 
 }

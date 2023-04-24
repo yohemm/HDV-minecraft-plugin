@@ -45,7 +45,9 @@ public final class HDV extends JavaPlugin {
 
 
 
-        getCommand("hdv").setExecutor(new CommandHDV(this));
+        getCommand("hdv home").setExecutor(new CommandHDV(this));
+        getCommand("hdv admin").setExecutor(new CommandHDV(this));
+        getCommand("hdv whitelist").setExecutor(new CommandHDV(this));
         getServer().getPluginManager().registerEvents(new HDVListeners(this), this);
         // Plugin startup logic
 
