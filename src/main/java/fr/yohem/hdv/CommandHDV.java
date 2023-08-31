@@ -117,6 +117,7 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("Mauvaise utilisation : /hdv whitelist [rem/add]");
                                 }
                             }
+                            System.out.println(hdvPlug.menuManager.getMaterialBlack());
                             break;
                         case "admin":
                             if (!player.hasPermission("hdv.commands.admin")){

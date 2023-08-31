@@ -3,10 +3,14 @@ package fr.yohem.hdv;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -396,5 +400,34 @@ public class MenuManager {
         System.out.println(getItemSellable().size() + "    " +MAX_ITEMSELL_PER_PAGE);
         System.out.println(((double)getItemSellable().size()/(double)MAX_ITEMSELL_PER_PAGE) -1);
         return ((double)getItemSellable().size()/(double)MAX_ITEMSELL_PER_PAGE) -1;
+    }
+
+    public List<String> getMaterialBlack(){
+        System.out.println(blackList.stream().map(Enum::name).collect(Collectors.toList()));
+        return blackList.stream().filter(m->!Material.AIR.equals(m)).map(Enum::name).collect(Collectors.toList());
+    }
+    public void setMaterialBlack(List<String> newBlacks){
+        blackList.addAll(newBlacks.stream().distinct().map(Material::matchMaterial).collect(Collectors.toList()));
+    }
+
+    public void exportBlackList(HDV hdv){
+        final File file = new File(hdv.getDataFolder()+"/blackList.yml");
+        final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        System.out.println(getMaterialBlack());
+        configuration.set("blackList",getMaterialBlack());
+        try {
+            configuration.save(file);
+        }catch (IOException e) {
+            System.out.println("BLACKLIST NOT EXPORT");
+            throw new RuntimeException(e);
+        }
+    }
+    public void importBlackList(HDV hdv){
+        final File file = new File(hdv.getDataFolder()+"/blackList.yml");
+        final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        if (configuration.contains("blackList"))
+            setMaterialBlack((List<String>) configuration.get("blackList"));
+
+
     }
 }

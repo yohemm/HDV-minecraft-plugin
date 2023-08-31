@@ -37,6 +37,7 @@ public final class HDV extends JavaPlugin {
         }
         System.out.println("HDV OPEN");
         menuManager.update(ItemSell.importItems(this));
+        menuManager.importBlackList(this);
         for (Player p : getServer().getOnlinePlayers()){
             hdvPlayers.add(new HDVPlayer(p));
         }
@@ -58,6 +59,7 @@ public final class HDV extends JavaPlugin {
         for (ItemSell itemSell: menuManager.getItemsInHdv()){
             ItemSell.export(this, menuManager.getItemsInHdv());
         }
+        menuManager.exportBlackList(this);
         System.out.println("HDV CLOSE");
         // Plugin shutdown logic
     }
