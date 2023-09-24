@@ -31,7 +31,7 @@ commands:
   hdv home:
     description: access a l'hdv
     usages: Mauvais utilisation de la commande.
-    permission: hdv.commands.use
+    permission: hdv.commands.open
     aliases:
       - hdv
       - hdv h

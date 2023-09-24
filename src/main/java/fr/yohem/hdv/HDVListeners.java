@@ -17,7 +17,6 @@ import java.util.List;
 public class HDVListeners implements Listener {
     private HDV hdv;
     public HDVListeners(HDV plugin) {
-        System.out.println("a");
         this.hdv = plugin;
     }
 
@@ -38,7 +37,7 @@ public class HDVListeners implements Listener {
             Player player = (Player) event.getWhoClicked();
             HDVPlayer hdvPlayer = hdv.findHdvPlayer(player);
 
-            if (event.getView().getTitle().equals("§8 Hôtel des ventes")) {
+            if (event.getView().getTitle().equals("§8 Courtier")) {
                 int p = hdvPlayer.getPage();
                 if (p < 0) {
                     hdvPlayer.menuRedirect("0", hdv);
@@ -57,19 +56,15 @@ public class HDVListeners implements Listener {
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.ACTUALISER.getDisplayName())) {
-                        player.sendMessage("Page Actualisé");
                         hdvPlayer.menuRedirect(hdvPlayer.getMenuStatus(), hdv);
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_HDV.getDisplayName())) {
-                        player.sendMessage("Retour à l'hotel");
                         hdvPlayer.menuRedirect("0", hdv);
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_EXPIRATION.getDisplayName())) {
-                        player.sendMessage("Ves expirations");
                         hdvPlayer.menuRedirect("expiration", hdv);
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.NAV_VENTES.getDisplayName())) {
-                        player.sendMessage("Ves ventes en cours");
                         hdvPlayer.menuRedirect("mysell", hdv);
                     }
                 }
@@ -77,7 +72,6 @@ public class HDVListeners implements Listener {
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
                 if (iS != null) {
 //                    Renvoi sur menu confitmation
-                    player.sendMessage("achat tenté sur " + iS.getItem().getType().name());
                     selectItem(iS,player, hdv.menuManager.menuConfirmationAchat(iS));
                 }
                 event.setCancelled(true);
@@ -103,16 +97,17 @@ public class HDVListeners implements Listener {
                                 player.sendMessage("Error Inventaire Full");
                                 return;
                             }
+                            player.sendMessage("Achat bien effectuer.");
                             economy.withdrawPlayer(player, itemSell.getPrice());
                             if(!itemInHdv.remove(itemSell)) {
-                                player.sendMessage("Pas de remove dans l'hdv");
+                                System.out.println("Pas de remove dans l'hdv");
                                 return;
+                            }else{
+                                hdv.menuManager.setItemsInHdv(itemInHdv);
                             }
-                            hdv.menuManager.setItemsInHdv(itemInHdv);
-
-                            economy.depositPlayer(Bukkit.getOfflinePlayer(itemSell.getPlayer()), itemSell.getPrice());
+                            if(Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(itemSell.getPlayer())))
+                            Bukkit.getPlayer(itemSell.getPlayer()).sendMessage(itemSell.getPrice()+"B de gagner, via une vente au courtier");
                             hdvPlayer.menuRedirect("0", hdv);
-                            System.out.println(economy.getBalance(player));
                         }else {
                             player.sendMessage("Vous n'avez pas assez de Berry!");
                         }
@@ -214,7 +209,6 @@ public class HDVListeners implements Listener {
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETIRIRER.getDisplayName())) {
                         itemSell.setDate(new Date().getTime() - 604800000);
                         Bukkit.getPlayer(itemSell.getPlayer()).sendMessage("Un de vos items en ventes viens d'être retirer du shop par un dragon celeste");
-                        System.out.println("back"+hdvPlayer.getMenuStatus());
                         hdvPlayer.menuBackRedirect(hdv);
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.RETOUR.getDisplayName())){
                         hdvPlayer.menuBackRedirect(hdv);
@@ -251,7 +245,6 @@ public class HDVListeners implements Listener {
 
 
             } else if (event.getView().getTitle().equals("§8 Mes ventes")){
-                System.out.println("dans menu vente");
                 String[] allString = hdvPlayer.getMenuStatus().split("/");
 
                 int p = hdvPlayer.getPage();
@@ -307,13 +300,11 @@ public class HDVListeners implements Listener {
                 if (currentItem.getItemMeta() != null && currentItem.getItemMeta().getDisplayName() != null)
 
                     if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.SUIVANT.getDisplayName())) {
-                        player.sendMessage("Page Suivante");
                         if (p < hdv.menuManager.findItemSellableOfSeller(player).size()/(MenuManager.MAX_ITEMSELL_PER_PAGE-1)+1)
                             hdvPlayer.setMenuStatus(status+"/"+(p + 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
 
                     } else if (currentItem.getItemMeta().getDisplayName().equals(MenuManager.ButtonAction.PRECENDANT.getDisplayName())){
-                        player.sendMessage("Page Precendante");
                         if (p > 0)
                             hdvPlayer.setMenuStatus(status+"/"+ (p - 1));
                         player.openInventory(hdv.menuManager.generateInv(hdvPlayer));
@@ -331,7 +322,6 @@ public class HDVListeners implements Listener {
                 ItemSell iS = hdv.menuManager.findItemSell(currentItem);
                 if (iS != null) {
                     // click sur item en Vente
-                    player.sendMessage("Récuperation ténté sur " + iS.getItem().getType().name());
                     player.openInventory(hdv.menuManager.menuConfirmationAnulation(iS));
                 }
 
@@ -355,11 +345,8 @@ public class HDVListeners implements Listener {
     public void onDrag(InventoryInteractEvent event){
         Inventory inv = event.getInventory();
         Player player = (Player) event.getWhoClicked();
-        System.out.println(event.getEventName());
-        player.sendMessage("drag");
         if(event.getView().getTitle().equals("§8 Hotel de ventes")){
             event.setCancelled(true);
-            System.out.println("drag hdv");
         }
 
     }

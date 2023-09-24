@@ -263,7 +263,7 @@ public class MenuManager {
     public Inventory menuHotelDesVentes(int page){
         int startId = MAX_ITEMSELL_PER_PAGE*page;
         verifyPage(page, (int)getMaxPageHdv());
-        Inventory inv = hdvPlug.getServer().createInventory(null, 54, "§8 Hôtel des ventes");
+        Inventory inv = hdvPlug.getServer().createInventory(null, 54, "§8 Courtier");
         List<ItemSell>itemSellable = getItemSellable();
         addButtonNavigation(page,getMaxPageHdv() ,inv);
         inv.setItem(7, new ItemGenerator(gGlass).setName(ButtonAction.NAV_VENTES.displayName).generate());
@@ -397,13 +397,10 @@ public class MenuManager {
     }
 
     public double getMaxPageHdv() {
-        System.out.println(getItemSellable().size() + "    " +MAX_ITEMSELL_PER_PAGE);
-        System.out.println(((double)getItemSellable().size()/(double)MAX_ITEMSELL_PER_PAGE) -1);
         return ((double)getItemSellable().size()/(double)MAX_ITEMSELL_PER_PAGE) -1;
     }
 
     public List<String> getMaterialBlack(){
-        System.out.println(blackList.stream().map(Enum::name).collect(Collectors.toList()));
         return blackList.stream().filter(m->!Material.AIR.equals(m)).map(Enum::name).collect(Collectors.toList());
     }
     public void setMaterialBlack(List<String> newBlacks){
@@ -413,7 +410,6 @@ public class MenuManager {
     public void exportBlackList(HDV hdv){
         final File file = new File(hdv.getDataFolder()+"/blackList.yml");
         final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        System.out.println(getMaterialBlack());
         configuration.set("blackList",getMaterialBlack());
         try {
             configuration.save(file);

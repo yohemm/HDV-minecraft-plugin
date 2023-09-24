@@ -46,17 +46,15 @@ public class HDVPlayer implements ConfigurationSerializable {
     public int getPage(){
         String[] spliter = menuStatus.split("/");
         String page;
-        System.out.println(Arrays.asList(spliter));
         if (spliter.length>1){
             page = spliter[1];
-            System.out.println(page);
         }else
             page = spliter[0];
         try{
 
             return Integer.parseInt(page);
         }catch (NumberFormatException exception) {
-            System.out.println("a");
+            System.out.println("HDV ERROR PAGES");
             return -1;
         }
     }

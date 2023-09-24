@@ -17,9 +17,6 @@ public class CommandHDV implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        System.out.println(cmd.getName());
-        System.out.println(label);
-        System.out.println(Arrays.asList(args));
         if (args.length >= 2 && args[0].toLowerCase().equals("open")) {
             if (args.length == 2) {
                 if (!sender.hasPermission("hdv.commands.open")) {
@@ -28,10 +25,8 @@ public class CommandHDV implements CommandExecutor {
                 }
                 for (Player pl : Bukkit.getOnlinePlayers())
                     if (pl.getName().equals(args[1])) {
-                        System.out.println(pl.getName() + " Open HDV via inv");
                         hdvPlug.findHdvPlayer(pl).menuRedirect("0", hdvPlug);
                     }
-                System.out.println("aaa");
             }
         }
         if (sender instanceof Player) {
@@ -40,7 +35,6 @@ public class CommandHDV implements CommandExecutor {
             if (hdvplayer != null) {
                 Player player = (Player) hdvplayer.getPlayer();
                 if (args.length >= 1) {
-                    System.out.println(args[0]);
                     switch (args[0].toLowerCase()) {
                         case "help":
                             if (player.hasPermission("hdv.commands.help"))
@@ -117,7 +111,6 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("Mauvaise utilisation : /hdv whitelist [rem/add]");
                                 }
                             }
-                            System.out.println(hdvPlug.menuManager.getMaterialBlack());
                             break;
                         case "admin":
                             if (!player.hasPermission("hdv.commands.admin")){
