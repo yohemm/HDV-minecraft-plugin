@@ -91,7 +91,7 @@ public class HDVListeners implements Listener {
                         Economy economy = HDV.getEconomy();
 
                         if (economy.getBalance(player) >= itemSell.getPrice()) {
-//!                    Cas ou l'on a l'inv plein
+//!                     Cas ou l'on a l'inv plein
                             List<ItemSell> itemInHdv = hdv.menuManager.getItemsInHdv();
                             if (!player.getInventory().addItem(itemSell.getItem()).isEmpty()) {
                                 player.sendMessage("Error Inventaire Full");
