@@ -11,6 +11,7 @@ import java.util.*;
 
 public class CommandHDV implements CommandExecutor {
     HDV hdvPlug;
+
     public CommandHDV(HDV hdv_plug) {
         this.hdvPlug = hdv_plug;
     }
@@ -37,18 +38,23 @@ public class CommandHDV implements CommandExecutor {
                 if (args.length >= 1) {
                     switch (args[0].toLowerCase()) {
                         case "help":
-                            if (player.hasPermission("hdv.commands.help"))
+                            if (!sender.hasPermission("hdv.commands.help")) {
+                                sender.sendMessage("Vous n'avez pas access a cette commande");
+                                return false;
+                            }
+
                             sender.sendMessage("§m§n=============§r §6§lHotel des Ventes§r §m§n=============");
-                            for (Map.Entry<String , List<String>> commandeH : getCommands().entrySet()){
-                                if (player.hasPermission("hdv.commands."+commandeH.getKey())){
-                                    player.sendMessage("/§6hdv "+commandeH.getValue().get(0)+ "§r- §a"+commandeH.getValue().get(1));
+                            for (Map.Entry<String, List<String>> commandeH : getCommands().entrySet()) {
+                                if (player.hasPermission("hdv.commands." + commandeH.getKey())) {
+                                    player.sendMessage("/§6hdv " + commandeH.getValue().get(0) + "§r- §a"
+                                            + commandeH.getValue().get(1));
                                 }
                             }
 
                             break;
                         case "sell":
                             if (args.length == 2) {
-                                if (!player.hasPermission("hdv.commands.sell")){
+                                if (!player.hasPermission("hdv.commands.sell")) {
                                     player.sendMessage("Vous n'avez pas access a cette commande");
                                     return false;
                                 }
@@ -70,50 +76,54 @@ public class CommandHDV implements CommandExecutor {
                                     player.sendMessage("L'item que vous souhaitez mettre en vente n'est pas autoriser");
                                     return false;
                                 }
-                                if (hdvPlug.menuManager.getBlackList().contains(item.getType())){
+                                if (hdvPlug.menuManager.getBlackList().contains(item.getType())) {
                                     player.sendMessage("Item Interdsit a la vente");
                                     return false;
                                 }
                                 player.getInventory().removeItem(item);
                                 hdvPlug.menuManager.addItemSellInHdv(new ItemSell(item, player.getUniqueId(), amout));
-                                player.sendMessage("Vous avez mis en ventes " + item.getAmount() + " " + item.getType().name() + " aux prix de " + amout);
+                                player.sendMessage("Vous avez mis en ventes " + item.getAmount() + " "
+                                        + item.getType().name() + " aux prix de " + amout);
                                 return true;
                             } else {
                                 player.sendMessage("format requi : /hdv sell <amout>");
                             }
                             break;
                         case "whitelist":
-                            if (!player.hasPermission("hdv.commands.whitelist")){
+                            if (!player.hasPermission("hdv.commands.whitelist")) {
                                 player.sendMessage("Vous n'avez pas access a cette commande");
                                 return false;
                             }
-                            if (args.length == 2){
-                                if (args[1].equalsIgnoreCase("add")){
+                            if (args.length == 2) {
+                                if (args[1].equalsIgnoreCase("add")) {
                                     if (player.getInventory().getItemInMainHand() != null) {
-                                        if (hdvPlug.menuManager.getBlackList().remove(player.getInventory().getItemInMainHand().getType()))
+                                        if (hdvPlug.menuManager.getBlackList()
+                                                .remove(player.getInventory().getItemInMainHand().getType()))
                                             player.sendMessage("Possibilté ajouté");
-                                    }else
+                                    } else
                                         player.sendMessage("Vous devez avoir un item dans votre main");
 
-                                }else if(args[1].equalsIgnoreCase("rem")){
+                                } else if (args[1].equalsIgnoreCase("rem")) {
                                     if (player.getInventory().getItemInMainHand() != null) {
-                                        if (hdvPlug.menuManager.getBlackList().add(player.getInventory().getItemInMainHand().getType())) {
+                                        if (hdvPlug.menuManager.getBlackList()
+                                                .add(player.getInventory().getItemInMainHand().getType())) {
                                             player.sendMessage("Possibilté supprimer");
                                             List<ItemSell> itemSellList = hdvPlug.menuManager.getItemsInHdv();
                                             for (ItemSell itemSell : hdvPlug.menuManager.getItemsInHdv())
-                                                if (!itemSell.isExpired() && hdvPlug.menuManager.getBlackList().contains(itemSell.getItem().getType())){
-                                                    itemSell.setDate(new Date().getTime()-ItemSell.EXPIRATION_DELAY);
+                                                if (!itemSell.isExpired() && hdvPlug.menuManager.getBlackList()
+                                                        .contains(itemSell.getItem().getType())) {
+                                                    itemSell.setDate(new Date().getTime() - ItemSell.EXPIRATION_DELAY);
                                                 }
                                         }
-                                    }else
+                                    } else
                                         player.sendMessage("Vous devez avoir un item dans votre main");
-                                }else {
+                                } else {
                                     player.sendMessage("Mauvaise utilisation : /hdv whitelist [rem/add]");
                                 }
                             }
                             break;
                         case "admin":
-                            if (!player.hasPermission("hdv.commands.admin")){
+                            if (!player.hasPermission("hdv.commands.admin")) {
                                 player.sendMessage("Vous n'avez pas access a cette commande");
                                 return false;
                             }
@@ -121,19 +131,19 @@ public class CommandHDV implements CommandExecutor {
                             player.openInventory(hdvPlug.menuManager.generateInv(hdvplayer));
                             break;
                         default:
-                            if (!player.hasPermission("hdv.commands.see")){
+                            if (!player.hasPermission("hdv.commands.see")) {
                                 player.sendMessage("Vous n'avez pas access a cette commande");
                                 return false;
                             }
                             for (HDVPlayer p : hdvPlug.hdvPlayers) {
-                                if (p.getPlayer().getName().equals(args[0])){
+                                if (p.getPlayer().getName().equals(args[0])) {
                                     hdvplayer.menuRedirect(p.getPlayer().getName(), hdvPlug);
                                 }
                             }
                             break;
                     }
                 } else {
-                    if (!player.hasPermission("hdv.commands.use")){
+                    if (!player.hasPermission("hdv.commands.use")) {
                         player.sendMessage("Vous n'avez pas access a cette commande");
                         return false;
                     }
@@ -146,7 +156,7 @@ public class CommandHDV implements CommandExecutor {
         return false;
     }
 
-    public Map<String, List<String>> getCommands(){
+    public Map<String, List<String>> getCommands() {
         Map commands = new HashMap<>();
         commands.put("use", Arrays.asList("", "Acceder a l'hdv"));
         commands.put("sell", Arrays.asList("sell <price> ", "Vend l'item en main a un certain prix"));

@@ -31,7 +31,7 @@ commands:
   hdv home:
     description: access a l'hdv
     usages: Mauvais utilisation de la commande.
-    permission: hdv.commands.open
+    permission: hdv.commands.use
     aliases:
       - hdv
       - hdv h
@@ -42,32 +42,33 @@ permissions:
   hdv.commands.use:
     description: acces to hdv
     default: true
-    children:
-      hdv.commands.sell: true
-      hdv.commands.buy: true
   hdv.commands.sell:
     description: access to sell item in hdv
-    default: true
-  hdv.use.buy:
-    description: access to buy item in hdv
     default: true
   hdv.commands.whitelist:
     default: op
     description: enable item on whitelist
-    children:
-      hdv.commands.use: true
   hdv.commands.admin:
     default: op
     description: access  administrator maneger hdv menu
-    children:
-      hdv.commands.use: true
-      hdv.commands.whitelist: true
-      hdv.commands.see: true
-      hdv.commands.open: true
-
   hdv.commands.see:
     default: op
     description: access to see item in shop of an seller
   hdv.commands.open:
     description: force an player to open hdv
     default: op
+  hdv.use:
+    description: acces to sell and buy item in hdv
+    default: true
+    children:
+      hdv.commands.use: true
+      hdv.commands.sell: true
+  hdv.admin:
+    default: op
+    description: full access
+    children:
+      hdv.use: true
+      hdv.commands.whitelist: true
+      hdv.commands.admin: true
+      hdv.commands.open: true
+      hdv.commands.see: true

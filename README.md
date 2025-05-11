@@ -21,14 +21,21 @@ A Player can manage his sell list with expirable items.
 
 All is in inventory's menu.
 ## Table of Conxtents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+1. [HDV ( Player's Sell Menu )](#hdv--players-sell-menu-)
+   1. [🌟 Project Status](#-project-status)
+   2. [Overview](#overview)
+   3. [Table of Conxtents](#table-of-conxtents)
+   4. [Installation](#installation)
+      1. [Prerequisites](#prerequisites)
+      2. [Steps](#steps)
+   5. [Usages](#usages)
+   6. [Permissions](#permissions)
+   7. [Features](#features)
+   8. [Technologies Used](#technologies-used)
+   9. [Configuration](#configuration)
+   10. [Contributing](#contributing)
+   11. [License](#license)
+   12. [Contact](#contact)
 
 ---
 
@@ -49,10 +56,10 @@ git clone https://github.com/yohemm/menu-gui-mc-plugin.git
 
 ---
 
-## Usage
+## Usages
 
 
-`/hdv sell [amount] `: sell all item in main hand
+`/hdv sell [amount]`: sell all item in main hand
 
 `/hdv`: view item sellable in hdv
 
@@ -62,6 +69,23 @@ git clone https://github.com/yohemm/menu-gui-mc-plugin.git
 
 `/hdv open [Player]`: force player to see hdv
 
+`/hdv help`: see commandes about hdv
+
+`/hdv whitelist [add/rem]`: to blacklist or unblacklist item in main hand 
+
+---
+
+## Permissions
+
+`hdv.commands.help`: permission to execute `/hdv help`, defautl _true_
+`hdv.use`: permission to execute `/hdv` and `/hdv sell [amount]`, defautl _true_
+`hdv.commands.use`: permission to execute `/hdv`, defautl _true_
+`hdv.commands.sell`:  permission to execute `/hdv sell [amount]`, defautl _true_
+`hdv.commands.open`: permission to execute `/hdv open [Player]`, defautl _op_
+`hdv.admin`: permission to execute any commands
+`hdv.commands.whitelist`: permission to execute `/hdv whitelist [add/rem]`, defautl _op_
+`hdv.commands.admin`: permission to execute `/hdv admin`, defautl _op_
+`hdv.commands.see`: permission to execute `/hdv [Player]`, defautl _op_
 
 ---
 
