@@ -58,7 +58,6 @@ git clone https://github.com/yohemm/menu-gui-mc-plugin.git
 
 ## Usages
 
-
 `/hdv sell [amount]`: sell all item in main hand
 
 `/hdv`: view item sellable in hdv
@@ -77,15 +76,25 @@ git clone https://github.com/yohemm/menu-gui-mc-plugin.git
 
 ## Permissions
 
+
 `hdv.commands.help`: permission to execute `/hdv help`, defautl _true_
+
 `hdv.use`: permission to execute `/hdv` and `/hdv sell [amount]`, defautl _true_
+
 `hdv.commands.use`: permission to execute `/hdv`, defautl _true_
+
 `hdv.commands.sell`:  permission to execute `/hdv sell [amount]`, defautl _true_
+
 `hdv.commands.open`: permission to execute `/hdv open [Player]`, defautl _op_
+
 `hdv.admin`: permission to execute any commands
+
 `hdv.commands.whitelist`: permission to execute `/hdv whitelist [add/rem]`, defautl _op_
+
 `hdv.commands.admin`: permission to execute `/hdv admin`, defautl _op_
+
 `hdv.commands.see`: permission to execute `/hdv [Player]`, defautl _op_
+
 
 ---
 
